@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.gillsystemsllc.sandbox</groupId>
+    <artifactId>pad-util</artifactId>
+    <version>1.0</version>
+    
+    
+    <properties>
+        <!-- BUILD -->
+        <build.jdk>13</build.jdk>
+        <build.mvn>3.8.6</build.mvn>
+        <build.enc>UTF-8</build.enc>
+        
+        <maven.compiler.release>${build.jdk}</maven.compiler.release>
+        <maven.compiler.source>${build.jdk}</maven.compiler.source>
+        <maven.compiler.target>${build.jdk}</maven.compiler.target>
+        <maven.compiler.testRelease>${build.jdk}</maven.compiler.testRelease>
+        <maven.compiler.testSource>${build.jdk}</maven.compiler.testSource>
+        <maven.compiler.testTarget>${build.jdk}</maven.compiler.testTarget>
+        
+        <project.build.sourceEncoding>${build.enc}</project.build.sourceEncoding>
+        <project.resource.sourceEncoding>${build.enc}</project.resource.sourceEncoding>
+        <project.reporting.outputEncoding>${build.enc}</project.reporting.outputEncoding>
+    </properties>
+    
+    
+    <build>
+        <directory>${project.basedir}/bin</directory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
+        <outputDirectory>${project.basedir}/bin/classes</outputDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/resources</directory>
+            </resource>
+        </resources>
+    </build>
+
+</project>
