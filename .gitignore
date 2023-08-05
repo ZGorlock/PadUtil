@@ -4,12 +4,10 @@
 
 
 bin/
+log/
 etc/
-*tmp/
+tmp/
 .git/
-
-*.iml
-*.class
 
 !**/src/**
 
@@ -27,3 +25,4 @@ etc/
 !**/.idea/modules.xml
 !**/.idea/vcs.xml
 !**/.idea/settings.*
+!**/.idea/*.iml
