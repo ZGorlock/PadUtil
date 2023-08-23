@@ -21,6 +21,8 @@ public class ActiveSkill extends Skill {
     
     public Integer transformTo;
     
+    public Integer transformFrom;
+    
     
     //Constructors
     

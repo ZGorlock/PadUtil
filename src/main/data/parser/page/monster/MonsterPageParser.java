@@ -17,6 +17,7 @@ import main.data.parser.page.PageParser;
 import main.data.scraper.page.category.MonsterPageScraper;
 import main.entity.base.resource.Image;
 import main.entity.base.resource.Page;
+import main.entity.base.resource.Resource;
 import main.entity.monster.Monster;
 import main.entity.monster.awakening.Awakening;
 import main.entity.monster.detail.Series;
@@ -52,6 +53,9 @@ public class MonsterPageParser extends PageParser<Monster> {
         final Monster monster = new Monster();
         
         monster.page = new Page(page);
+        monster.id = Optional.of(monster.page)
+                .map(Resource::getName).map(e -> e.replaceAll("\\D", ""))
+                .map(Integer::parseInt).orElse(null);
         
         try {
             final Document doc = Jsoup.parse(page);
@@ -60,10 +64,10 @@ public class MonsterPageParser extends PageParser<Monster> {
                     .map(e -> e.select(":root > .list-group > .list-group-item"))
                     .orElseThrow();
             
-            parseMonsterImageSection(monster, container.get(0));
-            parseMonsterTitleSection(monster, container.get(1));
-            parseMonsterSkillSection(monster, container.get(2));
-            parseMonsterStatsSection(monster, container.get(3));
+            parseMonsterImageSection(monster, container.select("div.text-center").first());
+            parseMonsterTitleSection(monster, container.select("div.d-flex").first());
+            parseMonsterSkillSection(monster, container.select("div.align-items-start").first());
+            parseMonsterStatsSection(monster, container.select("div.align-items-start").last());
             
         } catch (Exception e) {
             System.err.println("Failed to parse page: " + page.getAbsolutePath());
@@ -80,8 +84,8 @@ public class MonsterPageParser extends PageParser<Monster> {
                     Optional.of(imageSection)
                             .map(e -> e.selectFirst(":root > img"))
                             .map(e -> e.attr("src"))
-                            .ifPresent(iconUrl -> {
-                                monster.icon = new Image(iconUrl);
+                            .ifPresent(imageUrl -> {
+                                monster.image = new Image(imageUrl);
                             });
                 });
     }
@@ -93,8 +97,8 @@ public class MonsterPageParser extends PageParser<Monster> {
                     Optional.of(titleSection)
                             .map(e -> e.selectFirst(":root > img.monster-icon"))
                             .map(e -> e.attr("src"))
-                            .ifPresent(imageUrl -> {
-                                monster.image = new Image(imageUrl);
+                            .ifPresent(iconUrl -> {
+                                monster.icon = new Image(iconUrl);
                             });
                     
                     Optional.of(titleSection)
@@ -333,7 +337,7 @@ public class MonsterPageParser extends PageParser<Monster> {
                                 
                                 Optional.of(countdownDetails)
                                         .map(e -> e.selectFirst(":root > span.badge-steelblue"))
-                                        .map(Element::text).map(e -> e.replaceAll("(?i)LV\\.\\s*1\\s*CD:\\s*(\\d+)", "$1"))
+                                        .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*1\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                         .map(Integer::parseInt)
                                         .ifPresent(baseCountdown -> {
                                             activeSkill.baseCountdown = baseCountdown;
@@ -341,14 +345,15 @@ public class MonsterPageParser extends PageParser<Monster> {
                                 
                                 Optional.of(countdownDetails)
                                         .map(e -> e.selectFirst(":root > span.badge-danger"))
-                                        .map(Element::text).map(e -> e.replaceAll("(?i)LV\\.\\s*MAX\\s*CD:\\s*(\\d+)", "$1"))
+                                        .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*MAX\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                         .map(Integer::parseInt)
                                         .ifPresent(minCountdown -> {
                                             activeSkill.minCountdown = minCountdown;
+                                            activeSkill.baseCountdown = Optional.ofNullable(activeSkill.baseCountdown).orElse(minCountdown);
                                         });
                                 
                                 Optional.ofNullable(activeSkill.baseCountdown)
-                                        .map(e -> (e - Optional.ofNullable(activeSkill.minCountdown).orElse(0)))
+                                        .map(e -> (e - Optional.ofNullable(activeSkill.minCountdown).orElse(0) + 1))
                                         .ifPresent(maxLevel -> {
                                             activeSkill.maxLevel = maxLevel;
                                         });
@@ -362,11 +367,20 @@ public class MonsterPageParser extends PageParser<Monster> {
                             });
                     
                     Optional.of(activeSkillDetails)
-                            .map(e -> e.selectFirst(":root > div > div.align-items-end > a"))
+                            .map(e -> e.selectFirst(":root > div > div.align-items-end:contains(Transform to) > a"))
                             .map(e -> e.attr("href")).map(e -> e.replaceAll("\\D", ""))
                             .map(Integer::parseInt)
                             .ifPresent(transformTo -> {
                                 activeSkill.transformTo = transformTo;
+                            });
+                    
+                    Optional.of(activeSkillDetails)
+                            .map(e -> e.select(":root > div > div.align-items-end:contains(Transform from) > a"))
+                            .map(Elements::last)
+                            .map(e -> e.attr("href")).map(e -> e.replaceAll("\\D", ""))
+                            .map(Integer::parseInt)
+                            .ifPresent(transformFrom -> {
+                                activeSkill.transformFrom = transformFrom;
                             });
                     
                     Optional.of(activeSkillDetails)
@@ -404,7 +418,7 @@ public class MonsterPageParser extends PageParser<Monster> {
                                             
                                             Optional.of(countdownDetails)
                                                     .map(e -> e.selectFirst(":root > span.badge-steelblue"))
-                                                    .map(Element::text).map(e -> e.replaceAll("(?i)LV\\.\\s*1\\s*CD:\\s*(\\d+)", "$1"))
+                                                    .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*1\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                                     .map(Integer::parseInt)
                                                     .ifPresent(baseCountdown -> {
                                                         activeSkill.baseCountdown = baseCountdown;
@@ -412,14 +426,15 @@ public class MonsterPageParser extends PageParser<Monster> {
                                             
                                             Optional.of(countdownDetails)
                                                     .map(e -> e.selectFirst(":root > span.badge-danger"))
-                                                    .map(Element::text).map(e -> e.replaceAll("(?i)LV\\.\\s*MAX\\s*CD:\\s*(\\d+)", "$1"))
+                                                    .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*MAX\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                                     .map(Integer::parseInt)
                                                     .ifPresent(minCountdown -> {
                                                         activeSkill.minCountdown = minCountdown;
+                                                        activeSkill.baseCountdown = Optional.ofNullable(activeSkill.baseCountdown).orElse(minCountdown);
                                                     });
                                             
                                             Optional.ofNullable(activeSkill.baseCountdown)
-                                                    .map(e -> (e - Optional.ofNullable(activeSkill.minCountdown).orElse(0)))
+                                                    .map(e -> (e - Optional.ofNullable(activeSkill.minCountdown).orElse(0) + 1))
                                                     .ifPresent(maxLevel -> {
                                                         activeSkill.maxLevel = maxLevel;
                                                     });
@@ -453,7 +468,7 @@ public class MonsterPageParser extends PageParser<Monster> {
                                             
                                             Optional.of(countdownDetails)
                                                     .map(e -> e.selectFirst(":root > span.badge-steelblue"))
-                                                    .map(Element::text).map(e -> e.replaceAll("(?i)LV\\.\\s*1\\s*CD:\\s*(\\d+)", "$1"))
+                                                    .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*1\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                                     .map(Integer::parseInt)
                                                     .ifPresent(baseCountdown -> {
                                                         evolvedSkill.baseCountdown = baseCountdown;
@@ -461,14 +476,15 @@ public class MonsterPageParser extends PageParser<Monster> {
                                             
                                             Optional.of(countdownDetails)
                                                     .map(e -> e.selectFirst(":root > span.badge-danger"))
-                                                    .map(Element::text).map(e -> e.replaceAll("(?i).*CD:\\s*(\\d+)", "$1"))
+                                                    .map(Element::text).map(e -> e.replaceAll("(?i)\\s*(?:LV\\.\\s*MAX\\s*)?CD:\\s*(\\d+)\\s*", "$1"))
                                                     .map(Integer::parseInt)
                                                     .ifPresent(minCountdown -> {
                                                         evolvedSkill.minCountdown = minCountdown;
+                                                        evolvedSkill.baseCountdown = Optional.ofNullable(evolvedSkill.baseCountdown).orElse(minCountdown);
                                                     });
                                             
                                             Optional.ofNullable(evolvedSkill.baseCountdown)
-                                                    .map(e -> (e - Optional.ofNullable(evolvedSkill.minCountdown).orElse(0)))
+                                                    .map(e -> (e - Optional.ofNullable(evolvedSkill.minCountdown).orElse(0) + 1))
                                                     .ifPresent(maxLevel -> {
                                                         evolvedSkill.maxLevel = maxLevel;
                                                     });
@@ -560,6 +576,7 @@ public class MonsterPageParser extends PageParser<Monster> {
                         case "div":
                             evo.materials = childNode.select(":root.materials > a").stream()
                                     .map(e -> e.attr("href")).map(e -> e.replaceAll("\\D", ""))
+                                    .map(e -> e.isEmpty() ? "-1" : e)
                                     .map(Integer::parseInt)
                                     .collect(Collectors.toList());
                             break;

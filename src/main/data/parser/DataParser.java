@@ -62,17 +62,10 @@ public final class DataParser {
     
     public static void parseMonsterPages() {
         System.out.println("Parsing Monster Pages...\n\n");
-//        EntityCache.cacheMonsters(monsterPageParser.parseAll());
-
-//        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\02588.html");
-//        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\09359.html");
-//        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\09804.html");
-        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\10333.html");
-        Monster m = monsterPageParser.parseMonster(f);
+        EntityCache.cacheMonsters(monsterPageParser.parseAll());
         
-        EntityCache.cacheMonsters(Map.of(f, m));
-        
-        int g = 5;
+        //File f = new File(DataMirror.DIR_BASE, "monster\\09804.html");
+        //Monster x = monsterPageParser.parseMonster(f);
     }
     
 }
