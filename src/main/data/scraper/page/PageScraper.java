@@ -15,17 +15,19 @@ import java.util.regex.Pattern;
 import commons.access.Filesystem;
 import commons.access.Internet;
 import commons.object.string.StringUtility;
-import main.data.cache.DataCache;
-import main.data.cache.DataMirror;
-import main.data.scraper.DataScraper;
-import main.data.scraper.ErrorResponse;
+import main.data.mirror.DataMirror;
+import main.data.mirror.host.DataHost;
+import main.data.mirror.host.ErrorResponse;
+import main.data.scraper.base.Scraper;
 import org.jsoup.nodes.Element;
 
-public abstract class PageScraper extends DataScraper<String> {
+public abstract class PageScraper extends Scraper<String> {
     
     //Constants
     
-    public static final String URL_ROOT_PAGE = DataMirror.URL_BASE;
+    public static final String URL_ROOT_PAGE = DataHost.URL_BASE;
+    
+    public static final String MIRROR_ROOT_PAGE = DataMirror.DIR_BASE.getName();
     
     public static final Pattern URL_PATTERN_PAGE = Pattern.compile("(?<url>(?<host>" + Pattern.quote(URL_ROOT_PAGE) + ")" + "(?<location>(?<path>(?:[\\w\\-]*(?:/|$))*)(?<name>[\\w\\-]+\\.\\w+|)))");
     
@@ -131,17 +133,17 @@ public abstract class PageScraper extends DataScraper<String> {
     
     @Override
     protected final Optional<File> locateLocalFile(String localPath, String localName) {
-        return DataCache.getPageFile(localPath, localName);
+        return DataMirror.getPageFile(localPath, localName);
     }
     
     @Override
     protected boolean localFilePresent(File localFile) {
-        return DataCache.localFileExists(localFile);
+        return DataMirror.localFileExists(localFile);
     }
     
     @Override
     protected boolean localFileNotPresent(File localFile) {
-        return DataCache.localFileNotExists(localFile);
+        return DataMirror.localFileNotExists(localFile);
     }
     
     
@@ -162,6 +164,11 @@ public abstract class PageScraper extends DataScraper<String> {
     @Override
     protected String getUrlRoot() {
         return URL_ROOT_PAGE;
+    }
+    
+    @Override
+    protected String getMirrorRoot() {
+        return MIRROR_ROOT_PAGE;
     }
     
     @Override

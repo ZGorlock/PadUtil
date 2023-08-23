@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 import commons.access.Internet;
 import commons.lambda.stream.mapper.Mappers;
-import main.data.scraper.ErrorResponse;
+import main.data.mirror.host.ErrorResponse;
 import main.data.scraper.page.PageScraper;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;

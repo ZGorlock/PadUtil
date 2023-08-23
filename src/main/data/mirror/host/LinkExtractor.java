@@ -5,7 +5,7 @@
  * Repo:    https://github.com/ZGorlock/PadUtil
  */
 
-package main.data.cache;
+package main.data.mirror.host;
 
 import java.io.File;
 import java.util.Collection;
@@ -19,13 +19,14 @@ import java.util.stream.Collectors;
 import commons.access.Filesystem;
 import commons.object.collection.ListUtility;
 import commons.object.string.StringUtility;
+import main.data.mirror.DataMirror;
 
 public final class LinkExtractor {
     
     //Static Methods
     
     public static Optional<List<String>> extractLinks(Pattern linkExtractorPattern, String rootUrl) {
-        return DataCache.getAllPageFiles()
+        return DataMirror.getAllPageFiles()
                 .flatMap(pageList -> extractPageLinks(pageList, linkExtractorPattern))
                 .flatMap(urlList -> formatExtractedLinks(urlList, rootUrl));
     }

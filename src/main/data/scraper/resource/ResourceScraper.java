@@ -11,15 +11,17 @@ import java.io.File;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import main.data.cache.DataCache;
-import main.data.cache.DataMirror;
-import main.data.scraper.DataScraper;
+import main.data.mirror.DataMirror;
+import main.data.mirror.host.DataHost;
+import main.data.scraper.base.Scraper;
 
-public abstract class ResourceScraper<T> extends DataScraper<T> {
+public abstract class ResourceScraper<T> extends Scraper<T> {
     
     //Constants
     
-    public static final String URL_ROOT_RESOURCE = DataMirror.URL_STATIC;
+    public static final String URL_ROOT_RESOURCE = DataHost.URL_STATIC;
+    
+    public static final String MIRROR_ROOT_RESOURCE = DataMirror.DIR_STATIC.getName();
     
     public static final Pattern URL_PATTERN_RESOURCE = Pattern.compile("(?<url>(?<host>" + Pattern.quote(URL_ROOT_RESOURCE) + ")" + "(?<location>(?<path>(?:[\\w\\-]*(?:/|$))*)(?<name>[\\w\\-]+\\.\\w+|)))");
     
@@ -37,17 +39,17 @@ public abstract class ResourceScraper<T> extends DataScraper<T> {
     
     @Override
     protected final Optional<File> locateLocalFile(String localPath, String localName) {
-        return DataCache.getResourceFile(localPath, localName);
+        return DataMirror.getResourceFile(localPath, localName);
     }
     
     @Override
     protected boolean localFilePresent(File localFile) {
-        return DataCache.localFileExists(localFile);
+        return DataMirror.localFileExists(localFile);
     }
     
     @Override
     protected boolean localFileNotPresent(File localFile) {
-        return DataCache.localFileNotExists(localFile);
+        return DataMirror.localFileNotExists(localFile);
     }
     
     
@@ -66,6 +68,11 @@ public abstract class ResourceScraper<T> extends DataScraper<T> {
     @Override
     protected String getUrlRoot() {
         return URL_ROOT_RESOURCE;
+    }
+    
+    @Override
+    protected String getMirrorRoot() {
+        return MIRROR_ROOT_RESOURCE;
     }
     
     @Override
