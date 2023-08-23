@@ -7,6 +7,7 @@
 
 package main.entity.monster.awakening;
 
+import main.data.entity.EntityStore;
 import main.entity.base.resource.Image;
 import main.entity.base.tag.Tag;
 
@@ -47,6 +48,14 @@ public class Awakening extends Tag {
     }
     
     
+    //Methods
+    
+    @Override
+    public void store() {
+        storeEntity(this);
+    }
+    
+    
     //Getters
     
     @Override
@@ -64,6 +73,14 @@ public class Awakening extends Tag {
     
     public static Integer extractId(String searchUrl) {
         return Integer.parseInt(searchUrl.replaceAll("^.*/\\?" + TAG_KEYWORD + "=.+\"(\\d+?)\".*$", "$1"));
+    }
+    
+    public static Awakening storeEntity(Awakening entity) {
+        return EntityStore.storeAwakening(entity);
+    }
+    
+    public static Awakening lookupEntity(int id) {
+        return EntityStore.lookupAwakening(id);
     }
     
 }

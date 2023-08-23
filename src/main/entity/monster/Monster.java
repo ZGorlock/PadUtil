@@ -9,6 +9,7 @@ package main.entity.monster;
 
 import java.util.List;
 
+import main.data.entity.EntityStore;
 import main.entity.base.Entity;
 import main.entity.base.resource.Image;
 import main.entity.base.resource.Page;
@@ -68,6 +69,25 @@ public class Monster extends Entity {
     
     public Monster() {
         super();
+    }
+    
+    
+    //Methods
+    
+    @Override
+    public void store() {
+        storeEntity(this);
+    }
+    
+    
+    //Static Methods
+    
+    public static Monster storeEntity(Monster entity) {
+        return EntityStore.storeMonster(entity);
+    }
+    
+    public static Monster lookupEntity(int id) {
+        return EntityStore.lookupMonster(id);
     }
     
 }

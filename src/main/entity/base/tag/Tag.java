@@ -7,6 +7,7 @@
 
 package main.entity.base.tag;
 
+import main.data.entity.EntityStore;
 import main.data.mirror.host.DataHost;
 import main.entity.base.Entity;
 
@@ -29,6 +30,14 @@ public class Tag extends Entity {
     
     public Tag(String name, String searchUrl) {
         this(extractId(searchUrl), name);
+    }
+    
+    
+    //Methods
+    
+    @Override
+    public void store() {
+        storeEntity(this);
     }
     
     
@@ -67,6 +76,14 @@ public class Tag extends Entity {
     
     public static Integer extractIdFromIcon(String iconUrl) {
         return extractIdFromIcon(iconUrl, ".*?");
+    }
+    
+    public static Tag storeEntity(Tag entity) {
+        return EntityStore.storeTag(entity);
+    }
+    
+    public static Tag lookupEntity(int id) {
+        return EntityStore.lookupTag(id);
     }
     
 }

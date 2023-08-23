@@ -7,6 +7,7 @@
 
 package main;
 
+import main.data.entity.EntityStore;
 import main.data.mirror.cache.DataCache;
 import main.data.parser.DataParser;
 import main.data.scraper.DataScraper;
@@ -32,6 +33,9 @@ public class PadUtil {
         
         if (PARSE) {
             DataParser.parse();
+            EntityStore.save();
+        } else {
+            EntityStore.load();
         }
         
         int g = 5;

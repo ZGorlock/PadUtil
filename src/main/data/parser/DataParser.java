@@ -8,9 +8,12 @@
 package main.data.parser;
 
 import java.io.File;
+import java.util.Map;
 import java.util.function.Consumer;
 
+import main.data.mirror.cache.EntityCache;
 import main.data.parser.page.monster.MonsterPageParser;
+import main.data.parser.page.search.SearchPageParser;
 import main.entity.monster.Monster;
 
 public final class DataParser {
@@ -23,6 +26,8 @@ public final class DataParser {
     
     
     //Static Fields
+    
+    public static final SearchPageParser searchPageParser = new SearchPageParser();
     
     public static final MonsterPageParser monsterPageParser = new MonsterPageParser();
     
@@ -45,18 +50,27 @@ public final class DataParser {
             categoryParser.run();
         };
         
+        parser.accept(DataParser::parseSearchPages);
+        
         parser.accept(DataParser::parseMonsterPages);
+    }
+    
+    public static void parseSearchPages() {
+        System.out.println("Parsing Search Pages...\n\n");
+        EntityCache.cacheSearchForms(searchPageParser.parseAll());
     }
     
     public static void parseMonsterPages() {
         System.out.println("Parsing Monster Pages...\n\n");
-//        monsterPageParser.parseAll();
+//        EntityCache.cacheMonsters(monsterPageParser.parseAll());
 
 //        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\02588.html");
 //        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\09359.html");
 //        File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\09804.html");
         File f = new File("data\\.mirror\\pad.chesterip.cc\\monster\\10333.html");
         Monster m = monsterPageParser.parseMonster(f);
+        
+        EntityCache.cacheMonsters(Map.of(f, m));
         
         int g = 5;
     }

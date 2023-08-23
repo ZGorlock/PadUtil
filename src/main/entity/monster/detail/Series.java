@@ -7,6 +7,7 @@
 
 package main.entity.monster.detail;
 
+import main.data.entity.EntityStore;
 import main.entity.base.tag.Tag;
 
 public class Series extends Tag {
@@ -31,6 +32,14 @@ public class Series extends Tag {
     }
     
     
+    //Methods
+    
+    @Override
+    public void store() {
+        storeEntity(this);
+    }
+    
+    
     //Getters
     
     @Override
@@ -43,6 +52,14 @@ public class Series extends Tag {
     
     public static Integer extractId(String searchUrl) {
         return Tag.extractId(searchUrl, TAG_KEYWORD);
+    }
+    
+    public static Series storeEntity(Series entity) {
+        return EntityStore.storeSeries(entity);
+    }
+    
+    public static Series lookupEntity(int id) {
+        return EntityStore.lookupSeries(id);
     }
     
 }

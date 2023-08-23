@@ -9,6 +9,7 @@ package main.entity.monster.detail;
 
 import java.util.List;
 
+import main.data.entity.EntityStore;
 import main.entity.base.resource.Image;
 import main.entity.base.tag.Tag;
 
@@ -68,6 +69,14 @@ public class Type extends Tag {
     }
     
     
+    //Methods
+    
+    @Override
+    public void store() {
+        storeEntity(this);
+    }
+    
+    
     //Getters
     
     @Override
@@ -80,6 +89,14 @@ public class Type extends Tag {
     
     public static Integer extractId(String searchUrl) {
         return Tag.extractId(searchUrl, TAG_KEYWORD);
+    }
+    
+    public static Type storeEntity(Type entity) {
+        return EntityStore.storeType(entity);
+    }
+    
+    public static Type lookupEntity(int id) {
+        return EntityStore.lookupType(id);
     }
     
 }

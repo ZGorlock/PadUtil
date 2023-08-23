@@ -36,6 +36,8 @@ public class DataCache {
     
     //Static Fields
     
+    public static final BiMap<String, String> searchPages = new BiMap<>();
+    
     public static final BiMap<String, String> monsterPages = new BiMap<>();
     
     public static final BiMap<String, String> imageResources = new BiMap<>();
@@ -64,7 +66,7 @@ public class DataCache {
     }
     
     public static File lookup(String url) {
-        return Stream.of(monsterPages, imageResources)
+        return Stream.of(searchPages, monsterPages, imageResources)
                 .map(e -> performLookup(e, url))
                 .filter(Objects::nonNull)
                 .findFirst().orElse(null);
@@ -75,6 +77,14 @@ public class DataCache {
                 .map(URL::toExternalForm)
                 .map(DataCache::lookup)
                 .orElse(null);
+    }
+    
+    public static File lookupSearchPage(String url) {
+        return performLookup(searchPages, url);
+    }
+    
+    public static File lookupSearchPage(URL url) {
+        return performLookup(searchPages, url);
     }
     
     public static File lookupMonsterPage(String url) {
@@ -110,7 +120,7 @@ public class DataCache {
     }
     
     public static String reverseLookup(String filePath) {
-        return Stream.of(monsterPages, imageResources)
+        return Stream.of(searchPages, monsterPages, imageResources)
                 .map(dataMap -> performReverseLookup(dataMap, filePath))
                 .filter(Objects::nonNull)
                 .findFirst().orElse(null);
@@ -121,6 +131,14 @@ public class DataCache {
                 .map(StringUtility::fileString)
                 .map(DataCache::reverseLookup)
                 .orElse(null);
+    }
+    
+    public static String lookupSearchPageUrlKey(String filePath) {
+        return performReverseLookup(searchPages, filePath);
+    }
+    
+    public static String lookupSearchPageUrlKey(File file) {
+        return performReverseLookup(searchPages, file);
     }
     
     public static String lookupMonsterUrlKey(String filePath) {
@@ -171,8 +189,14 @@ public class DataCache {
     }
     
     public static void load() {
+        loadSearchPageIndex();
         loadMonsterPageIndex();
         loadImageResourceIndex();
+    }
+    
+    public static Map<String, String> loadSearchPageIndex() {
+        System.out.println("Loading Search Page Index...\n\n");
+        return loadDataIndex(searchPages, SEARCH_PAGE_INDEX);
     }
     
     public static Map<String, String> loadMonsterPageIndex() {
@@ -196,8 +220,14 @@ public class DataCache {
     }
     
     public static void save() {
+        saveSearchPageIndex();
         saveMonsterPageIndex();
         saveImageResourceIndex();
+    }
+    
+    public static boolean saveSearchPageIndex() {
+        System.out.println("Saving Search Page Index...\n\n");
+        return saveDataIndex(searchPages, SEARCH_PAGE_INDEX);
     }
     
     public static boolean saveMonsterPageIndex() {

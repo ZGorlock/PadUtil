@@ -13,12 +13,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import commons.access.Internet;
-import commons.lambda.stream.mapper.Mappers;
-import main.data.mirror.host.ErrorResponse;
 import main.data.scraper.page.PageScraper;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import main.data.scraper.page.main.SearchPageScraper;
 
 public class MonsterPageScraper extends PageScraper {
     
@@ -35,7 +31,7 @@ public class MonsterPageScraper extends PageScraper {
     
     @Override
     public Optional<List<String>> tryEnumerateUrls() {
-        return tryScrapePageCount()
+        return SearchPageScraper.tryScrapePageCount()
                 .stream().flatMapToInt(e -> IntStream.rangeClosed(1, e)).boxed()
                 .map(this::getPageUrl)
                 .filter(Optional::isPresent).map(Optional::get)
@@ -64,25 +60,6 @@ public class MonsterPageScraper extends PageScraper {
     @Override
     protected Pattern getUrlExtractorPattern() {
         return URL_PATTERN_EXTRACTOR_MONSTER;
-    }
-    
-    
-    //Static Methods
-    
-    public static int scrapePageCount() {
-        return tryScrapePageCount()
-                .orElseGet(ErrorResponse.invoke(-1, "Failed to scrape page count"));
-    }
-    
-    public static Optional<Integer> tryScrapePageCount() {
-        return Optional.of(URL_ROOT_PAGE)
-                .map(pageId -> Mappers.perform(pageId, e -> System.out.println("Scraping page count: " + pageId)))
-                .map(Internet::getHtml)
-                .map(document -> document.getElementsByClass("mx-2 flex-grow-1 text-center"))
-                .map(Elements::first).map(Element::text)
-                .map(text -> text.replaceAll("(?i)results", "")).map(String::strip)
-                .filter(text -> text.matches("^\\d+$"))
-                .map(Integer::parseInt);
     }
     
 }

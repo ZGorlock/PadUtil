@@ -11,11 +11,14 @@ import java.util.function.Consumer;
 
 import main.data.mirror.cache.DataCache;
 import main.data.scraper.page.category.MonsterPageScraper;
+import main.data.scraper.page.main.SearchPageScraper;
 import main.data.scraper.resource.category.ImageResourceScraper;
 
 public final class DataScraper {
     
     //Static Fields
+    
+    public static final SearchPageScraper searchPageScraper = new SearchPageScraper();
     
     public static final MonsterPageScraper monsterPageScraper = new MonsterPageScraper();
     
@@ -40,9 +43,16 @@ public final class DataScraper {
             categoryScraper.run();
         };
         
+        scraper.accept(DataScraper::scrapeSearchPages);
+        
         scraper.accept(DataScraper::scrapeMonsterPages);
         
         scraper.accept(DataScraper::scrapeImageResources);
+    }
+    
+    public static void scrapeSearchPages() {
+        System.out.println("Scraping Search Pages...\n\n");
+        DataCache.cacheData(DataCache.searchPages, searchPageScraper.fetchAll());
     }
     
     public static void scrapeMonsterPages() {
