@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import main.data.entity.EntityStore;
+import main.data.mirror.DataMirror;
 import main.data.mirror.cache.EntityCache;
 import main.data.parser.page.monster.MonsterPageParser;
 import main.data.parser.page.search.SearchPageParser;
@@ -22,7 +24,7 @@ public final class DataParser {
     
     public static final boolean READ_CACHE = false;
     
-    public static final boolean WRITE_CACHE = true;
+    public static final boolean WRITE_CACHE = false;
     
     
     //Static Fields
@@ -65,7 +67,8 @@ public final class DataParser {
         EntityCache.cacheMonsters(monsterPageParser.parseAll());
         
         //File f = new File(DataMirror.DIR_BASE, "monster\\09804.html");
-        //Monster x = monsterPageParser.parseMonster(f);
+        //Monster x = monsterPageParser.parse(f);
+        //EntityStore.storeMonster(x);
     }
     
 }

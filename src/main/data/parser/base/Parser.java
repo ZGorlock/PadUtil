@@ -120,14 +120,12 @@ public abstract class Parser<T extends Entity> {
     public Optional<T> tryParseSource(File file, boolean overwrite) {
         return Optional.of(file)
                 .map(x -> Mappers.perform(x, e -> System.out.println("Attempting to parse " + getTypeName() + "...")))
-                .flatMap(this::tryParseData);
-
-
-//                .filter(data -> getLocalFile(file) //TODO 
-//                        .filter(localFile -> ((overwrite || permitEntityCacheWrite()) || localFileNotPresent(localFile)) && Filesystem.createDirectory(localFile.getParentFile()))
-//                        .map(x -> Mappers.perform(x, e -> System.out.println("Saving parsed " + getTypeName() + ": " + x.getAbsolutePath())))
-//                        .map(localFile -> saveData(localFile, data))
-//                        .orElse(true));
+                .flatMap(this::tryParseData)
+                .filter(data -> getLocalFile(file)
+                        .filter(localFile -> permitEntityCacheWrite() && (overwrite || localFileNotPresent(localFile)) && Filesystem.createDirectory(localFile.getParentFile()))
+                        .map(x -> Mappers.perform(x, e -> System.out.println("Saving parsed " + getTypeName() + ": " + x.getAbsolutePath())))
+                        .map(localFile -> saveData(localFile, data))
+                        .orElse(true));
     }
     
     public Optional<T> tryParseSource(File file) {

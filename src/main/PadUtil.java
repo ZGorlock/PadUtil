@@ -16,14 +16,14 @@ public class PadUtil {
     
     //Constants
     
-    public static final boolean MIRROR = true;
+    public static final boolean MIRROR = false;
     
     public static final boolean PARSE = true;
     
     
     //Main Method
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (MIRROR) {
             DataScraper.scrape();
             DataCache.save();
@@ -37,8 +37,6 @@ public class PadUtil {
         } else {
             EntityStore.load();
         }
-        
-        int g = 5;
     }
     
 }
