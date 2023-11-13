@@ -18,6 +18,8 @@ import java.util.Optional;
 import main.data.entity.EntityStore;
 import main.entity.base.Entity;
 import main.entity.base.form.SearchForm;
+import main.entity.dungeon.Dungeon;
+import main.entity.dungeon.SubDungeon;
 import main.entity.monster.Monster;
 
 public class EntityCache {
@@ -27,6 +29,10 @@ public class EntityCache {
     public static final Map<File, SearchForm> searchForms = new LinkedHashMap<>();
     
     public static final Map<File, Monster> monsters = new LinkedHashMap<>();
+    
+    public static final Map<File, Dungeon> dungeons = new LinkedHashMap<>();
+    
+    public static final Map<File, SubDungeon> subDungeons = new LinkedHashMap<>();
     
     
     //Static Methods
@@ -69,6 +75,30 @@ public class EntityCache {
                     
                     Optional.of(monster)
                             .ifPresent(EntityStore::storeMonster);
+                });
+    }
+    
+    public static void cacheDungeons(Map<File, Dungeon> data) {
+        cache(dungeons, data);
+        
+        dungeons.values().stream()
+                .filter(Objects::nonNull)
+                .forEachOrdered(dungeon -> {
+                    
+                    Optional.of(dungeon)
+                            .ifPresent(EntityStore::storeDungeon);
+                });
+    }
+    
+    public static void cacheSubDungeons(Map<File, SubDungeon> data) {
+        cache(subDungeons, data);
+        
+        subDungeons.values().stream()
+                .filter(Objects::nonNull)
+                .forEachOrdered(subDungeon -> {
+                    
+                    Optional.of(subDungeon)
+                            .ifPresent(EntityStore::storeSubDungeon);
                 });
     }
     

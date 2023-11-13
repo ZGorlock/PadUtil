@@ -31,6 +31,10 @@ public class DataCache {
     
     public static final File MONSTER_PAGE_INDEX = new File(INDEX_DIR, "monster.csv");
     
+    public static final File DUNGEON_PAGE_INDEX = new File(INDEX_DIR, "dungeon.csv");
+    
+    public static final File SUB_DUNGEON_PAGE_INDEX = new File(INDEX_DIR, "sub-dungeon.csv");
+    
     public static final File IMAGE_RESOURCES_INDEX = new File(INDEX_DIR, "image.csv");
     
     
@@ -39,6 +43,10 @@ public class DataCache {
     public static final BiMap<String, String> searchPages = new BiMap<>();
     
     public static final BiMap<String, String> monsterPages = new BiMap<>();
+    
+    public static final BiMap<String, String> dungeonPages = new BiMap<>();
+    
+    public static final BiMap<String, String> subDungeonPages = new BiMap<>();
     
     public static final BiMap<String, String> imageResources = new BiMap<>();
     
@@ -66,7 +74,7 @@ public class DataCache {
     }
     
     public static File lookup(String url) {
-        return Stream.of(searchPages, monsterPages, imageResources)
+        return Stream.of(searchPages, monsterPages, dungeonPages, subDungeonPages, imageResources)
                 .map(e -> performLookup(e, url))
                 .filter(Objects::nonNull)
                 .findFirst().orElse(null);
@@ -95,6 +103,22 @@ public class DataCache {
         return performLookup(monsterPages, url);
     }
     
+    public static File lookupDungeonPage(String url) {
+        return performLookup(dungeonPages, url);
+    }
+    
+    public static File lookupDungeonPage(URL url) {
+        return performLookup(dungeonPages, url);
+    }
+    
+    public static File lookupSubDungeonPage(String url) {
+        return performLookup(subDungeonPages, url);
+    }
+    
+    public static File lookupSubDungeonPage(URL url) {
+        return performLookup(subDungeonPages, url);
+    }
+    
     public static File lookupImageResource(String url) {
         return performLookup(imageResources, url);
     }
@@ -120,7 +144,7 @@ public class DataCache {
     }
     
     public static String reverseLookup(String filePath) {
-        return Stream.of(searchPages, monsterPages, imageResources)
+        return Stream.of(searchPages, monsterPages, dungeonPages, subDungeonPages, imageResources)
                 .map(dataMap -> performReverseLookup(dataMap, filePath))
                 .filter(Objects::nonNull)
                 .findFirst().orElse(null);
@@ -147,6 +171,22 @@ public class DataCache {
     
     public static String lookupMonsterUrlKey(File file) {
         return performReverseLookup(monsterPages, file);
+    }
+    
+    public static String lookupDungeonUrlKey(String filePath) {
+        return performReverseLookup(dungeonPages, filePath);
+    }
+    
+    public static String lookupDungeonUrlKey(File file) {
+        return performReverseLookup(dungeonPages, file);
+    }
+    
+    public static String lookupSubDungeonUrlKey(String filePath) {
+        return performReverseLookup(subDungeonPages, filePath);
+    }
+    
+    public static String lookupSubDungeonUrlKey(File file) {
+        return performReverseLookup(subDungeonPages, file);
     }
     
     public static String lookupImageUrlKey(String filePath) {
@@ -191,6 +231,8 @@ public class DataCache {
     public static void load() {
         loadSearchPageIndex();
         loadMonsterPageIndex();
+        loadDungeonPageIndex();
+        loadSubDungeonPageIndex();
         loadImageResourceIndex();
     }
     
@@ -202,6 +244,16 @@ public class DataCache {
     public static Map<String, String> loadMonsterPageIndex() {
         System.out.println("Loading Monster Page Index...\n\n");
         return loadDataIndex(monsterPages, MONSTER_PAGE_INDEX);
+    }
+    
+    public static Map<String, String> loadDungeonPageIndex() {
+        System.out.println("Loading Dungeon Page Index...\n\n");
+        return loadDataIndex(dungeonPages, DUNGEON_PAGE_INDEX);
+    }
+    
+    public static Map<String, String> loadSubDungeonPageIndex() {
+        System.out.println("Loading Sub-Dungeon Page Index...\n\n");
+        return loadDataIndex(subDungeonPages, SUB_DUNGEON_PAGE_INDEX);
     }
     
     public static Map<String, String> loadImageResourceIndex() {
@@ -222,6 +274,8 @@ public class DataCache {
     public static void save() {
         saveSearchPageIndex();
         saveMonsterPageIndex();
+        saveDungeonPageIndex();
+        saveSubDungeonPageIndex();
         saveImageResourceIndex();
     }
     
@@ -233,6 +287,16 @@ public class DataCache {
     public static boolean saveMonsterPageIndex() {
         System.out.println("Saving Monster Page Index...\n\n");
         return saveDataIndex(monsterPages, MONSTER_PAGE_INDEX);
+    }
+    
+    public static boolean saveDungeonPageIndex() {
+        System.out.println("Saving Dungeon Page Index...\n\n");
+        return saveDataIndex(dungeonPages, DUNGEON_PAGE_INDEX);
+    }
+    
+    public static boolean saveSubDungeonPageIndex() {
+        System.out.println("Saving Sub-Dungeon Page Index...\n\n");
+        return saveDataIndex(subDungeonPages, SUB_DUNGEON_PAGE_INDEX);
     }
     
     public static boolean saveImageResourceIndex() {

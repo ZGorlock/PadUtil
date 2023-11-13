@@ -10,7 +10,9 @@ package main.data.scraper;
 import java.util.function.Consumer;
 
 import main.data.mirror.cache.DataCache;
+import main.data.scraper.page.category.DungeonPageScraper;
 import main.data.scraper.page.category.MonsterPageScraper;
+import main.data.scraper.page.category.SubDungeonPageScraper;
 import main.data.scraper.page.main.SearchPageScraper;
 import main.data.scraper.resource.category.ImageResourceScraper;
 
@@ -21,6 +23,10 @@ public final class DataScraper {
     public static final SearchPageScraper searchPageScraper = new SearchPageScraper();
     
     public static final MonsterPageScraper monsterPageScraper = new MonsterPageScraper();
+    
+    public static final DungeonPageScraper dungeonPageScraper = new DungeonPageScraper();
+    
+    public static final SubDungeonPageScraper subDungeonPageScraper = new SubDungeonPageScraper();
     
     public static final ImageResourceScraper imageResourceScraper = new ImageResourceScraper();
     
@@ -46,6 +52,10 @@ public final class DataScraper {
         scraper.accept(DataScraper::scrapeSearchPages);
         
         scraper.accept(DataScraper::scrapeMonsterPages);
+        scraper.accept(DataScraper::scrapeSubDungeonPages);
+        
+        scraper.accept(DataScraper::scrapeDungeonPages);
+        scraper.accept(DataScraper::scrapeSubDungeonPages);
         
         scraper.accept(DataScraper::scrapeImageResources);
     }
@@ -58,6 +68,16 @@ public final class DataScraper {
     public static void scrapeMonsterPages() {
         System.out.println("Scraping Monster Pages...\n\n");
         DataCache.cacheData(DataCache.monsterPages, monsterPageScraper.fetchAll());
+    }
+    
+    public static void scrapeDungeonPages() {
+        System.out.println("Scraping Dungeon Pages...\n\n");
+        DataCache.cacheData(DataCache.dungeonPages, dungeonPageScraper.fetchAll());
+    }
+    
+    public static void scrapeSubDungeonPages() {
+        System.out.println("Scraping Sub-Dungeon Pages...\n\n");
+        DataCache.cacheData(DataCache.subDungeonPages, subDungeonPageScraper.fetchAll());
     }
     
     public static void scrapeImageResources() {

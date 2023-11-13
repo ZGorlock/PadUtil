@@ -18,6 +18,8 @@ import commons.access.Project;
 import main.data.parser.base.Parser;
 import main.entity.base.Entity;
 import main.entity.base.tag.Tag;
+import main.entity.dungeon.Dungeon;
+import main.entity.dungeon.SubDungeon;
 import main.entity.monster.Monster;
 import main.entity.monster.awakening.Awakening;
 import main.entity.monster.detail.Series;
@@ -39,6 +41,10 @@ public class EntityStore {
     
     public static final File MONSTER_DIR = new File(ENTITY_DIR, "monster");
     
+    public static final File DUNGEON_DIR = new File(ENTITY_DIR, "dungeon");
+    
+    public static final File SUB_DUNGEON_DIR = new File(ENTITY_DIR, "sub-dungeon");
+    
     
     //Static Fields
     
@@ -51,6 +57,10 @@ public class EntityStore {
     private static final Map<Integer, Tag> tags = new LinkedHashMap<>();
     
     private static final Map<Integer, Monster> monsters = new LinkedHashMap<>();
+    
+    private static final Map<Integer, Dungeon> dungeons = new LinkedHashMap<>();
+    
+    private static final Map<Integer, SubDungeon> subDungeons = new LinkedHashMap<>();
     
     
     //Static Methods
@@ -82,6 +92,14 @@ public class EntityStore {
         return lookup(monsters, id);
     }
     
+    public static Dungeon lookupDungeon(int id) {
+        return lookup(dungeons, id);
+    }
+    
+    public static SubDungeon lookupSubDungeon(int id) {
+        return lookup(subDungeons, id);
+    }
+    
     private static <T extends Entity> T store(Map<Integer, T> store, T entity) {
         return Optional.ofNullable(entity)
                 .flatMap(e -> Optional.ofNullable(store)
@@ -109,12 +127,22 @@ public class EntityStore {
         return store(monsters, entity);
     }
     
+    public static Dungeon storeDungeon(Dungeon entity) {
+        return store(dungeons, entity);
+    }
+    
+    public static SubDungeon storeSubDungeon(SubDungeon entity) {
+        return store(subDungeons, entity);
+    }
+    
     public static void load() {
         loadAwakeningEntityStore();
         loadTypeEntityStore();
         loadSeriesEntityStore();
         loadTagEntityStore();
         loadMonsterEntityStore();
+        loadDungeonEntityStore();
+        loadSubDungeonEntityStore();
     }
     
     public static Map<Integer, Awakening> loadAwakeningEntityStore() {
@@ -142,6 +170,16 @@ public class EntityStore {
         return loadEntityStore(monsters, MONSTER_DIR, Monster.class);
     }
     
+    public static Map<Integer, Dungeon> loadDungeonEntityStore() {
+        System.out.println("Loading Dungeon Entity Store...\n\n");
+        return loadEntityStore(dungeons, DUNGEON_DIR, Dungeon.class);
+    }
+    
+    public static Map<Integer, SubDungeon> loadSubDungeonEntityStore() {
+        System.out.println("Loading Sub-Dungeon Entity Store...\n\n");
+        return loadEntityStore(subDungeons, SUB_DUNGEON_DIR, SubDungeon.class);
+    }
+    
     private static <T extends Entity> Map<Integer, T> loadEntityStore(Map<Integer, T> entityMap, File entityDir, Class<T> type) {
         Optional.of(entityDir).map(Filesystem::getFiles)
                 .stream().flatMap(Collection::stream)
@@ -162,6 +200,8 @@ public class EntityStore {
         saveSeriesEntityStore();
         saveTagEntityStore();
         saveMonsterEntityStore();
+        saveDungeonEntityStore();
+        saveSubDungeonEntityStore();
     }
     
     public static boolean saveAwakeningEntityStore() {
@@ -187,6 +227,16 @@ public class EntityStore {
     public static boolean saveMonsterEntityStore() {
         System.out.println("Saving Monster Entity Store...\n\n");
         return saveEntityStore(monsters, MONSTER_DIR);
+    }
+    
+    public static boolean saveDungeonEntityStore() {
+        System.out.println("Saving Dungeon Entity Store...\n\n");
+        return saveEntityStore(dungeons, DUNGEON_DIR);
+    }
+    
+    public static boolean saveSubDungeonEntityStore() {
+        System.out.println("Saving Sub-Dungeon Entity Store...\n\n");
+        return saveEntityStore(subDungeons, SUB_DUNGEON_DIR);
     }
     
     private static <T extends Entity> boolean saveEntityStore(Map<Integer, T> entityMap, File entityDir) {
