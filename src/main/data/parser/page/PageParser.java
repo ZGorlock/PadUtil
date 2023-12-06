@@ -17,8 +17,15 @@ import main.data.mirror.DataMirror;
 import main.data.parser.base.Parser;
 import main.entity.base.Entity;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PageParser<T extends Entity> extends Parser<T> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(PageParser.class);
+    
     
     //Methods
     
@@ -34,6 +41,14 @@ public abstract class PageParser<T extends Entity> extends Parser<T> {
                 .map(e -> e.attr("href")).map(e -> e.replaceAll("\\D", ""))
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
+    }
+    
+    
+    //Getters
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

@@ -19,9 +19,16 @@ import main.entity.dungeon.Dungeon;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("SimplifyOptionalCallChains")
 public class DungeonPageParser extends PageParser<Dungeon> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DungeonPageParser.class);
+    
     
     //Constants
     
@@ -54,8 +61,7 @@ public class DungeonPageParser extends PageParser<Dungeon> {
             parseDungeonSubDungeonSection(dungeon, container);
             
         } catch (Exception e) {
-            System.err.println("Failed to parse page: " + page.getAbsolutePath());
-            e.printStackTrace(System.err);
+            logger.error("Failed to parse page: {}", page.getAbsolutePath(), e);
         }
         
         return dungeon;
@@ -115,4 +121,10 @@ public class DungeonPageParser extends PageParser<Dungeon> {
     protected String getCategory() {
         return PAGE_CATEGORY_DUNGEON;
     }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
+    }
+    
 }

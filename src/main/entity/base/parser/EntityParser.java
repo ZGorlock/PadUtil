@@ -18,6 +18,8 @@ import com.google.gson.stream.JsonWriter;
 
 public class EntityParser implements TypeAdapterFactory {
     
+    //Methods
+    
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);

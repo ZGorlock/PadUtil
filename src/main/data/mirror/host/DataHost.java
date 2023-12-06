@@ -11,8 +11,15 @@ import java.io.File;
 
 import commons.access.Filesystem;
 import commons.access.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataHost {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DataHost.class);
+    
     
     //Constants
     

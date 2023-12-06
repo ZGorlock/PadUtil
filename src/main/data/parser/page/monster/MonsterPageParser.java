@@ -32,9 +32,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("SimplifyOptionalCallChains")
 public class MonsterPageParser extends PageParser<Monster> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(MonsterPageParser.class);
+    
     
     //Constants
     
@@ -70,8 +77,7 @@ public class MonsterPageParser extends PageParser<Monster> {
             parseMonsterStatsSection(monster, container.select("div.align-items-start").last());
             
         } catch (Exception e) {
-            System.err.println("Failed to parse page: " + page.getAbsolutePath());
-            e.printStackTrace(System.err);
+            logger.error("Failed to parse page: {}", page.getAbsolutePath(), e);
         }
         
         return monster;
@@ -608,6 +614,11 @@ public class MonsterPageParser extends PageParser<Monster> {
     @Override
     protected String getCategory() {
         return PAGE_CATEGORY_MONSTER;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

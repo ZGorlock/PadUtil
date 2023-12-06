@@ -14,8 +14,15 @@ import main.data.parser.page.dungeon.DungeonPageParser;
 import main.data.parser.page.dungeon.SubDungeonPageParser;
 import main.data.parser.page.monster.MonsterPageParser;
 import main.data.parser.page.search.SearchPageParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataParser {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DataParser.class);
+    
     
     //Constants
     
@@ -46,7 +53,7 @@ public final class DataParser {
     
     public static void parse() {
         final Runnable printSeparator = () ->
-                System.out.println("\n\n" + ("=".repeat(120) + "\n").repeat(2) + "\n");
+                logger.info("\n\n{}\n", ("=".repeat(120) + "\n").repeat(2));
         
         final Consumer<Runnable> parser = (Runnable categoryParser) -> {
             printSeparator.run();
@@ -62,12 +69,12 @@ public final class DataParser {
     }
     
     public static void parseSearchPages() {
-        System.out.println("Parsing Search Pages...\n\n");
+        logger.info("Parsing Search Pages...\n\n");
         EntityCache.cacheSearchForms(searchPageParser.parseAll());
     }
     
     public static void parseMonsterPages() {
-        System.out.println("Parsing Monster Pages...\n\n");
+        logger.info("Parsing Monster Pages...\n\n");
         EntityCache.cacheMonsters(monsterPageParser.parseAll());
         
         //File f = new File(DataMirror.DIR_BASE, "monster\\09804.html");
@@ -76,7 +83,7 @@ public final class DataParser {
     }
     
     public static void parseDungeonPages() {
-        System.out.println("Parsing Dungeon Pages...\n\n");
+        logger.info("Parsing Dungeon Pages...\n\n");
         EntityCache.cacheDungeons(dungeonPageParser.parseAll());
         
         //File f = new File(DataMirror.DIR_BASE, "dungeon\\04741.html");
@@ -85,7 +92,7 @@ public final class DataParser {
     }
     
     public static void parseSubDungeonPages() {
-        System.out.println("Parsing Sub-Dungeon Pages...\n\n");
+        logger.info("Parsing Sub-Dungeon Pages...\n\n");
         EntityCache.cacheSubDungeons(subDungeonPageParser.parseAll());
         
         //File f = new File(DataMirror.DIR_BASE, "sub-dungeon\\04741_001.html");

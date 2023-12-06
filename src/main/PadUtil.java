@@ -7,12 +7,26 @@
 
 package main;
 
+import java.io.File;
+
+import commons.access.Project;
 import main.data.entity.EntityStore;
 import main.data.mirror.cache.DataCache;
 import main.data.parser.DataParser;
 import main.data.scraper.DataScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PadUtil {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(PadUtil.class);
+    
+    static {
+        System.setProperty("logback.configurationFile", new File(Project.RESOURCES_DIR, "logback.xml").getAbsolutePath());
+    }
+    
     
     //Constants
     

@@ -20,8 +20,15 @@ import commons.access.Filesystem;
 import commons.object.collection.ListUtility;
 import commons.object.string.StringUtility;
 import main.data.mirror.DataMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LinkExtractor {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(LinkExtractor.class);
+    
     
     //Static Methods
     

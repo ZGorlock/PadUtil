@@ -25,8 +25,15 @@ import commons.object.collection.ListUtility;
 import commons.object.string.StringUtility;
 import main.data.mirror.host.ErrorResponse;
 import main.data.mirror.host.LinkExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Scraper<T> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(Scraper.class);
+    
     
     //Constants
     
@@ -41,7 +48,7 @@ public abstract class Scraper<T> {
     
     public Map<String, File> fetchAll() {
         return tryFetchAll()
-                .orElseGet(ErrorResponse.invoke(Collections.emptyMap(), "Failed to fetch all " + getTypeName(true)));
+                .orElseGet(ErrorResponse.invoke(Collections.emptyMap(), getLogger(), "Failed to fetch all {}", getTypeName(true)));
     }
     
     public Optional<Map<String, File>> tryFetchAll() {
@@ -51,7 +58,7 @@ public abstract class Scraper<T> {
     
     public List<String> enumerateUrls() {
         return tryEnumerateUrls()
-                .orElseGet(ErrorResponse.invoke(Collections.emptyList(), "Failed to enumerate urls"));
+                .orElseGet(ErrorResponse.invoke(Collections.emptyList(), getLogger(), "Failed to enumerate urls"));
     }
     
     public Optional<List<String>> tryEnumerateUrls() {
@@ -60,7 +67,7 @@ public abstract class Scraper<T> {
     
     public Map<String, File> fetch(List<String> urlList) {
         return tryFetch(urlList)
-                .orElseGet(ErrorResponse.invoke("Failed to fetch " + getTypeName(true)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to fetch {}", getTypeName(true)));
     }
     
     public Optional<Map<String, File>> tryFetch(List<String> urlList) {
@@ -70,7 +77,7 @@ public abstract class Scraper<T> {
                 .map(Mappers.forEach(e -> Optional.ofNullable(e)
                         .map(url -> Optional.ofNullable(urlList).map(list -> (" " + (list.indexOf(url) + 1) + " / " + list.size() + " ")).orElse(""))
                         .map(separator -> StringUtility.pad(separator, 80, '-')).map(separator -> (System.lineSeparator() + separator))
-                        .ifPresent(System.out::println)))
+                        .ifPresent(getLogger()::trace)))
                 .map(url -> tryFetch(url)
                         .map(data -> Map.entry(url, data))
                         .orElse(null))
@@ -80,12 +87,12 @@ public abstract class Scraper<T> {
     
     public File fetch(String url) {
         return tryFetch(url)
-                .orElseGet(ErrorResponse.invoke("Failed to fetch " + getTypeName() + ": " + url));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to fetch {}: {}", getTypeName(), url));
     }
     
     public Optional<File> tryFetch(String url) {
         return Optional.ofNullable(url)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Fetching " + getTypeName() + ": " + x)))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Fetching {}: {}", getTypeName(), x)))
                 .map(this::tryFetchCached)
                 .filter(Optional::isPresent)
                 .orElseGet(() -> tryCreateCache(url));
@@ -93,20 +100,20 @@ public abstract class Scraper<T> {
     
     public File fetchCached(String url) {
         return tryFetchCached(url)
-                .orElseGet(ErrorResponse.invoke("Failed to fetch cached " + getTypeName() + ": " + url));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to fetch cached {}: {}", getTypeName(), url));
     }
     
     public Optional<File> tryFetchCached(String url) {
         return Optional.of(url)
                 .flatMap(this::getLocalFile)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Attempting to load cached " + getTypeName() + "...")))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Attempting to load cached {}...", getTypeName())))
                 .filter(this::localFilePresent)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Loaded cached " + getTypeName() + ": " + x)));
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Loaded cached {}: {}", getTypeName(), x)));
     }
     
     public File createCache(String url, boolean overwrite) {
         return tryCreateCache(url, overwrite)
-                .orElseGet(ErrorResponse.invoke("Failed to cache " + getTypeName() + ": " + url));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to cache {}: {}", getTypeName(), url));
     }
     
     public File createCache(String url) {
@@ -115,11 +122,11 @@ public abstract class Scraper<T> {
     
     public Optional<File> tryCreateCache(String url, boolean overwrite) {
         return Optional.of(url)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Attempting to download remote " + getTypeName() + "...")))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Attempting to download remote {}...", getTypeName())))
                 .map(this::scrapeData)
                 .flatMap(data -> getLocalFile(url)
                         .filter(localFile -> (overwrite || localFileNotPresent(localFile)) && Filesystem.createDirectory(localFile.getParentFile()))
-                        .map(x -> Mappers.perform(x, e -> System.out.println("Saving cached " + getTypeName() + ": " + x)))
+                        .map(x -> Mappers.perform(x, e -> getLogger().debug("Saving cached {}: {}", getTypeName(), x)))
                         .filter(localFile -> saveData(localFile, data)))
                 .map(Mappers.forEach(e -> delay(getDelayRms())));
     }
@@ -130,26 +137,25 @@ public abstract class Scraper<T> {
     
     public T scrapeData(String url) {
         return tryScrapeData(url)
-                .orElseGet(ErrorResponse.invoke("Failed to scrape " + getTypeName() + ": " + url));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to scrape {}: {}", getTypeName(), url));
     }
     
     public Optional<T> tryScrapeData(String url) {
         return Optional.of(url)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Scraping " + getTypeName() + ": " + x)))
+                .map(x -> Mappers.perform(x, e -> getLogger().debug("Scraping {}: {}", getTypeName(), x)))
                 .map(this::downloadData);
     }
     
     protected T downloadData(String url) {
         return tryDownloadData(url)
-                .orElseGet(ErrorResponse.invoke("Failed to download " + getTypeName() + " from: " + url));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to download {} from: {}", getTypeName(), url));
     }
     
     protected abstract Optional<T> tryDownloadData(String url);
     
     protected boolean saveData(File file, T data) {
         return trySaveData(file, data)
-                .orElseGet(ErrorResponse.invoke(false, "Failed to save " + getTypeName() + ": " +
-                        Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(false, getLogger(), "Failed to save {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     protected abstract Optional<Boolean> trySaveData(File file, T data);
@@ -213,6 +219,10 @@ public abstract class Scraper<T> {
     
     protected abstract int getDelayRms();
     
+    protected Logger getLogger() {
+        return logger;
+    }
+    
     
     //Static Methods
     
@@ -222,7 +232,7 @@ public abstract class Scraper<T> {
         }
         
         final int delay = (int) (Math.random() * (delayMs / 10)) + delayMs;
-        System.out.println("Sleeping " + delay + "ms...");
+        logger.trace("Sleeping {}ms...", delay);
         
         try {
             Thread.sleep(delay);

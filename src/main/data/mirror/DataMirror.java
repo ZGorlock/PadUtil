@@ -17,8 +17,15 @@ import commons.access.Filesystem;
 import commons.access.Project;
 import commons.object.string.StringUtility;
 import main.data.mirror.host.DataHost;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataMirror {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DataMirror.class);
+    
     
     //Constants
     

@@ -29,8 +29,15 @@ import main.data.mirror.host.ErrorResponse;
 import main.data.parser.DataParser;
 import main.entity.base.Entity;
 import main.entity.base.parser.EntityParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class Parser<T extends Entity> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
+    
     
     //Static Fields
     
@@ -44,7 +51,7 @@ public abstract class Parser<T extends Entity> {
     
     public Map<File, T> parseAll() {
         return tryParseAll()
-                .orElseGet(ErrorResponse.invoke(Collections.emptyMap(), "Failed to parse all " + getTypeName(true)));
+                .orElseGet(ErrorResponse.invoke(Collections.emptyMap(), getLogger(), "Failed to parse all {}", getTypeName(true)));
     }
     
     public Optional<Map<File, T>> tryParseAll() {
@@ -54,14 +61,14 @@ public abstract class Parser<T extends Entity> {
     
     public List<File> enumerateFiles() {
         return tryEnumerateFiles()
-                .orElseGet(ErrorResponse.invoke(Collections.emptyList(), "Failed to enumerate files"));
+                .orElseGet(ErrorResponse.invoke(Collections.emptyList(), getLogger(), "Failed to enumerate files"));
     }
     
     public abstract Optional<List<File>> tryEnumerateFiles();
     
     public Map<File, T> parse(List<File> fileList) {
         return tryParse(fileList)
-                .orElseGet(ErrorResponse.invoke("Failed to parse " + getTypeName(true)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to parse {}", getTypeName(true)));
     }
     
     public Optional<Map<File, T>> tryParse(List<File> fileList) {
@@ -71,7 +78,7 @@ public abstract class Parser<T extends Entity> {
                 .map(Mappers.forEach(e -> Optional.ofNullable(e)
                         .map(file -> Optional.ofNullable(fileList).map(list -> (" " + (list.indexOf(file) + 1) + " / " + list.size() + " ")).orElse(""))
                         .map(separator -> StringUtility.pad(separator, 80, '-')).map(separator -> (System.lineSeparator() + separator))
-                        .ifPresent(System.out::println)))
+                        .ifPresent(getLogger()::trace)))
                 .map(file -> tryParse(file)
                         .map(data -> Map.entry(file, data))
                         .orElse(null))
@@ -82,12 +89,12 @@ public abstract class Parser<T extends Entity> {
     
     public T parse(File file) {
         return tryParse(file)
-                .orElseGet(ErrorResponse.invoke("Failed to parse " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to parse {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public Optional<T> tryParse(File file) {
         return Optional.ofNullable(file)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Parsing " + getTypeName() + ": " + x.getAbsolutePath())))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Parsing {}: {}", getTypeName(), x.getAbsolutePath())))
                 .filter(e -> permitEntityCacheRead())
                 .map(this::tryLoadCached)
                 .filter(Optional::isPresent)
@@ -96,21 +103,21 @@ public abstract class Parser<T extends Entity> {
     
     public T loadCached(File file) {
         return tryLoadCached(file)
-                .orElseGet(ErrorResponse.invoke("Failed to load cached " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to load cached {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public Optional<T> tryLoadCached(File file) {
         return Optional.of(file)
                 .flatMap(this::getLocalFile)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Attempting to load cached " + getTypeName() + "...")))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Attempting to load cached {}...", getTypeName())))
                 .filter(this::localFilePresent)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Loading cached " + getTypeName() + ": " + x.getAbsolutePath())))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Loading cached {}: {}", getTypeName(), x.getAbsolutePath())))
                 .flatMap(this::tryLoadData);
     }
     
     public T parseSource(File file, boolean overwrite) {
         return tryParseSource(file, overwrite)
-                .orElseGet(ErrorResponse.invoke("Failed to parse " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to parse {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public T parseSource(File file) {
@@ -119,11 +126,11 @@ public abstract class Parser<T extends Entity> {
     
     public Optional<T> tryParseSource(File file, boolean overwrite) {
         return Optional.of(file)
-                .map(x -> Mappers.perform(x, e -> System.out.println("Attempting to parse " + getTypeName() + "...")))
+                .map(x -> Mappers.perform(x, e -> getLogger().trace("Attempting to parse {}...", getTypeName())))
                 .flatMap(this::tryParseData)
                 .filter(data -> getLocalFile(file)
                         .filter(localFile -> permitEntityCacheWrite() && (overwrite || localFileNotPresent(localFile)) && Filesystem.createDirectory(localFile.getParentFile()))
-                        .map(x -> Mappers.perform(x, e -> System.out.println("Saving parsed " + getTypeName() + ": " + x.getAbsolutePath())))
+                        .map(x -> Mappers.perform(x, e -> getLogger().debug("Saving parsed {}: {}", getTypeName(), x.getAbsolutePath())))
                         .map(localFile -> saveData(localFile, data))
                         .orElse(true));
     }
@@ -134,14 +141,14 @@ public abstract class Parser<T extends Entity> {
     
     public T parseData(File file) {
         return tryParseData(file)
-                .orElseGet(ErrorResponse.invoke("Failed to parse " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to parse {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public abstract Optional<T> tryParseData(File file);
     
     public T loadData(File file) {
         return tryLoadData(file)
-                .orElseGet(ErrorResponse.invoke("Failed to load " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to load {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public Optional<T> tryLoadData(File file) {
@@ -152,7 +159,7 @@ public abstract class Parser<T extends Entity> {
     
     public T readFromJson(String json) {
         return tryReadFromJson(json)
-                .orElseGet(ErrorResponse.invoke("Failed to read " + getTypeName() + " json"));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to read {} json", getTypeName()));
     }
     
     public Optional<T> tryReadFromJson(String json) {
@@ -162,7 +169,7 @@ public abstract class Parser<T extends Entity> {
     
     public boolean saveData(File file, T data) {
         return trySaveData(file, data)
-                .orElseGet(ErrorResponse.invoke("Failed to save " + getTypeName() + ": " + Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to save {}: {}", getTypeName(), Optional.ofNullable(file).map(File::getAbsolutePath).orElse(null)));
     }
     
     public Optional<Boolean> trySaveData(File file, T data) {
@@ -173,7 +180,7 @@ public abstract class Parser<T extends Entity> {
     
     public String saveToJson(T data) {
         return trySaveToJson(data)
-                .orElseGet(ErrorResponse.invoke("Failed to save " + getTypeName() + " json"));
+                .orElseGet(ErrorResponse.invoke(getLogger(), "Failed to save {} json", getTypeName()));
     }
     
     public Optional<String> trySaveToJson(T data) {
@@ -218,6 +225,10 @@ public abstract class Parser<T extends Entity> {
     protected abstract Class<T> getTypeClass();
     
     protected abstract String getCategory();
+    
+    protected Logger getLogger() {
+        return logger;
+    }
     
     
     //Static Methods

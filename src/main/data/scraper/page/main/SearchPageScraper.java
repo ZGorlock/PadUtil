@@ -16,8 +16,15 @@ import main.data.mirror.host.ErrorResponse;
 import main.data.scraper.page.PageScraper;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SearchPageScraper extends PageScraper {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(SearchPageScraper.class);
+    
     
     //Constants
     
@@ -39,17 +46,22 @@ public class SearchPageScraper extends PageScraper {
         return PAGE_CATEGORY_SEARCH;
     }
     
+    @Override
+    protected Logger getLogger() {
+        return logger;
+    }
+    
     
     //Static Methods
     
     public static int scrapePageCount() {
         return tryScrapePageCount()
-                .orElseGet(ErrorResponse.invoke(-1, "Failed to scrape page count"));
+                .orElseGet(ErrorResponse.invoke(-1, logger, "Failed to scrape page count"));
     }
     
     public static Optional<Integer> tryScrapePageCount() {
         return Optional.of(URL_ROOT_PAGE)
-                .map(pageId -> Mappers.perform(pageId, e -> System.out.println("Scraping page count: " + pageId)))
+                .map(pageId -> Mappers.perform(pageId, e -> logger.debug("Scraping page count: {}", pageId)))
                 .map(Internet::getHtml)
                 .map(document -> document.getElementsByClass("mx-2 flex-grow-1 text-center"))
                 .map(Elements::first).map(Element::text)

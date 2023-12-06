@@ -12,8 +12,15 @@ import java.util.regex.Pattern;
 
 import commons.object.string.StringUtility;
 import main.data.scraper.page.PageScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SubDungeonPageScraper extends PageScraper {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(SubDungeonPageScraper.class);
+    
     
     //Constants
     
@@ -49,6 +56,11 @@ public class SubDungeonPageScraper extends PageScraper {
     @Override
     protected Pattern getUrlExtractorPattern() {
         return URL_PATTERN_EXTRACTOR_SUB_DUNGEON;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

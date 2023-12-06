@@ -14,8 +14,15 @@ import java.util.regex.Pattern;
 import main.data.mirror.DataMirror;
 import main.data.mirror.host.DataHost;
 import main.data.scraper.base.Scraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ResourceScraper<T> extends Scraper<T> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(ResourceScraper.class);
+    
     
     //Constants
     
@@ -88,6 +95,11 @@ public abstract class ResourceScraper<T> extends Scraper<T> {
     @Override
     protected int getDelayRms() {
         return DELAY_RMS_RESOURCE;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

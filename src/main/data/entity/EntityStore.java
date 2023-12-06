@@ -24,8 +24,15 @@ import main.entity.monster.Monster;
 import main.entity.monster.awakening.Awakening;
 import main.entity.monster.detail.Series;
 import main.entity.monster.detail.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityStore {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(EntityStore.class);
+    
     
     //Constants
     
@@ -146,37 +153,37 @@ public class EntityStore {
     }
     
     public static Map<Integer, Awakening> loadAwakeningEntityStore() {
-        System.out.println("Loading Awakening Entity Store...\n\n");
+        logger.info("Loading Awakening Entity Store...\n\n");
         return loadEntityStore(awakenings, AWAKENING_DIR, Awakening.class);
     }
     
     public static Map<Integer, Type> loadTypeEntityStore() {
-        System.out.println("Loading Type Entity Store...\n\n");
+        logger.info("Loading Type Entity Store...\n\n");
         return loadEntityStore(types, TYPE_DIR, Type.class);
     }
     
     public static Map<Integer, Series> loadSeriesEntityStore() {
-        System.out.println("Loading Series Entity Store...\n\n");
+        logger.info("Loading Series Entity Store...\n\n");
         return loadEntityStore(series, SERIES_DIR, Series.class);
     }
     
     public static Map<Integer, Tag> loadTagEntityStore() {
-        System.out.println("Loading Tag Entity Store...\n\n");
+        logger.info("Loading Tag Entity Store...\n\n");
         return loadEntityStore(tags, TAG_DIR, Tag.class);
     }
     
     public static Map<Integer, Monster> loadMonsterEntityStore() {
-        System.out.println("Loading Monster Entity Store...\n\n");
+        logger.info("Loading Monster Entity Store...\n\n");
         return loadEntityStore(monsters, MONSTER_DIR, Monster.class);
     }
     
     public static Map<Integer, Dungeon> loadDungeonEntityStore() {
-        System.out.println("Loading Dungeon Entity Store...\n\n");
+        logger.info("Loading Dungeon Entity Store...\n\n");
         return loadEntityStore(dungeons, DUNGEON_DIR, Dungeon.class);
     }
     
     public static Map<Integer, SubDungeon> loadSubDungeonEntityStore() {
-        System.out.println("Loading Sub-Dungeon Entity Store...\n\n");
+        logger.info("Loading Sub-Dungeon Entity Store...\n\n");
         return loadEntityStore(subDungeons, SUB_DUNGEON_DIR, SubDungeon.class);
     }
     
@@ -205,37 +212,37 @@ public class EntityStore {
     }
     
     public static boolean saveAwakeningEntityStore() {
-        System.out.println("Saving Awakening Entity Store...\n\n");
+        logger.info("Saving Awakening Entity Store...\n\n");
         return saveEntityStore(awakenings, AWAKENING_DIR);
     }
     
     public static boolean saveTypeEntityStore() {
-        System.out.println("Saving Type Entity Store...\n\n");
+        logger.info("Saving Type Entity Store...\n\n");
         return saveEntityStore(types, TYPE_DIR);
     }
     
     public static boolean saveSeriesEntityStore() {
-        System.out.println("Saving Series Entity Store...\n\n");
+        logger.info("Saving Series Entity Store...\n\n");
         return saveEntityStore(series, SERIES_DIR);
     }
     
     public static boolean saveTagEntityStore() {
-        System.out.println("Saving Tag Entity Store...\n\n");
+        logger.info("Saving Tag Entity Store...\n\n");
         return saveEntityStore(tags, TAG_DIR);
     }
     
     public static boolean saveMonsterEntityStore() {
-        System.out.println("Saving Monster Entity Store...\n\n");
+        logger.info("Saving Monster Entity Store...\n\n");
         return saveEntityStore(monsters, MONSTER_DIR);
     }
     
     public static boolean saveDungeonEntityStore() {
-        System.out.println("Saving Dungeon Entity Store...\n\n");
+        logger.info("Saving Dungeon Entity Store...\n\n");
         return saveEntityStore(dungeons, DUNGEON_DIR);
     }
     
     public static boolean saveSubDungeonEntityStore() {
-        System.out.println("Saving Sub-Dungeon Entity Store...\n\n");
+        logger.info("Saving Sub-Dungeon Entity Store...\n\n");
         return saveEntityStore(subDungeons, SUB_DUNGEON_DIR);
     }
     

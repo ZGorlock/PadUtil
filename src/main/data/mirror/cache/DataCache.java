@@ -20,8 +20,15 @@ import commons.access.Filesystem;
 import commons.object.collection.map.BiMap;
 import commons.object.string.StringUtility;
 import main.data.mirror.DataMirror;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataCache {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DataCache.class);
+    
     
     //Constants
     
@@ -237,27 +244,27 @@ public class DataCache {
     }
     
     public static Map<String, String> loadSearchPageIndex() {
-        System.out.println("Loading Search Page Index...\n\n");
+        logger.info("Loading Search Page Index...\n\n");
         return loadDataIndex(searchPages, SEARCH_PAGE_INDEX);
     }
     
     public static Map<String, String> loadMonsterPageIndex() {
-        System.out.println("Loading Monster Page Index...\n\n");
+        logger.info("Loading Monster Page Index...\n\n");
         return loadDataIndex(monsterPages, MONSTER_PAGE_INDEX);
     }
     
     public static Map<String, String> loadDungeonPageIndex() {
-        System.out.println("Loading Dungeon Page Index...\n\n");
+        logger.info("Loading Dungeon Page Index...\n\n");
         return loadDataIndex(dungeonPages, DUNGEON_PAGE_INDEX);
     }
     
     public static Map<String, String> loadSubDungeonPageIndex() {
-        System.out.println("Loading Sub-Dungeon Page Index...\n\n");
+        logger.info("Loading Sub-Dungeon Page Index...\n\n");
         return loadDataIndex(subDungeonPages, SUB_DUNGEON_PAGE_INDEX);
     }
     
     public static Map<String, String> loadImageResourceIndex() {
-        System.out.println("Loading Image Resource Index...\n\n");
+        logger.info("Loading Image Resource Index...\n\n");
         return loadDataIndex(imageResources, IMAGE_RESOURCES_INDEX);
     }
     
@@ -280,27 +287,27 @@ public class DataCache {
     }
     
     public static boolean saveSearchPageIndex() {
-        System.out.println("Saving Search Page Index...\n\n");
+        logger.info("Saving Search Page Index...\n\n");
         return saveDataIndex(searchPages, SEARCH_PAGE_INDEX);
     }
     
     public static boolean saveMonsterPageIndex() {
-        System.out.println("Saving Monster Page Index...\n\n");
+        logger.info("Saving Monster Page Index...\n\n");
         return saveDataIndex(monsterPages, MONSTER_PAGE_INDEX);
     }
     
     public static boolean saveDungeonPageIndex() {
-        System.out.println("Saving Dungeon Page Index...\n\n");
+        logger.info("Saving Dungeon Page Index...\n\n");
         return saveDataIndex(dungeonPages, DUNGEON_PAGE_INDEX);
     }
     
     public static boolean saveSubDungeonPageIndex() {
-        System.out.println("Saving Sub-Dungeon Page Index...\n\n");
+        logger.info("Saving Sub-Dungeon Page Index...\n\n");
         return saveDataIndex(subDungeonPages, SUB_DUNGEON_PAGE_INDEX);
     }
     
     public static boolean saveImageResourceIndex() {
-        System.out.println("Saving Image Resource Index...\n\n");
+        logger.info("Saving Image Resource Index...\n\n");
         return saveDataIndex(imageResources, IMAGE_RESOURCES_INDEX);
     }
     

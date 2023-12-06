@@ -21,8 +21,15 @@ import main.entity.base.form.SearchForm;
 import main.entity.dungeon.Dungeon;
 import main.entity.dungeon.SubDungeon;
 import main.entity.monster.Monster;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityCache {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(EntityCache.class);
+    
     
     //Static Fields
     

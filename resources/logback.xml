@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration level="trace">
+    
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    
+    <timestamp key="logDate" datePattern="yyyy-MM-dd"/>
+    <timestamp key="logTimestamp" datePattern="yyyy-MM-dd_HH-mm-ss"/>
+    
+    <property scope="context" name="logroot" value="log/"/>
+    <property scope="context" name="log" value="PadUtil"/>
+    
+    
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+        </filter>
+        
+        <encoder>
+            <pattern>%message%n</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="CONSOLE_ERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.err</target>
+        
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        
+        <encoder>
+            <pattern>%message%n</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${logroot}/${logDate}/${log}-${logTimestamp}.log</file>
+        
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %5level %36logger{36} - %message%n</pattern>
+        </encoder>
+        
+        <append>true</append>
+        <prudent>true</prudent>
+    </appender>
+    
+    <appender name="FILE_ERR" class="ch.qos.logback.core.FileAppender">
+        <file>${logroot}/${logDate}/${log}-${logTimestamp}-error.log</file>
+        
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %36logger{36} - %message%n</pattern>
+        </encoder>
+        
+        <append>true</append>
+        <prudent>true</prudent>
+    </appender>
+    
+    
+    <root level="trace">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="CONSOLE_ERR"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE_ERR"/>
+    </root>
+
+</configuration>

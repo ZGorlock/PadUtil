@@ -15,8 +15,15 @@ import main.data.scraper.page.category.MonsterPageScraper;
 import main.data.scraper.page.category.SubDungeonPageScraper;
 import main.data.scraper.page.main.SearchPageScraper;
 import main.data.scraper.resource.category.ImageResourceScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataScraper {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(DataScraper.class);
+    
     
     //Static Fields
     
@@ -42,7 +49,7 @@ public final class DataScraper {
     
     public static void scrape() {
         final Runnable printSeparator = () ->
-                System.out.println("\n\n" + ("=".repeat(120) + "\n").repeat(2) + "\n");
+                logger.info("\n\n{}\n", ("=".repeat(120) + "\n").repeat(2));
         
         final Consumer<Runnable> scraper = (Runnable categoryScraper) -> {
             printSeparator.run();
@@ -61,27 +68,27 @@ public final class DataScraper {
     }
     
     public static void scrapeSearchPages() {
-        System.out.println("Scraping Search Pages...\n\n");
+        logger.info("Scraping Search Pages...\n\n");
         DataCache.cacheData(DataCache.searchPages, searchPageScraper.fetchAll());
     }
     
     public static void scrapeMonsterPages() {
-        System.out.println("Scraping Monster Pages...\n\n");
+        logger.info("Scraping Monster Pages...\n\n");
         DataCache.cacheData(DataCache.monsterPages, monsterPageScraper.fetchAll());
     }
     
     public static void scrapeDungeonPages() {
-        System.out.println("Scraping Dungeon Pages...\n\n");
+        logger.info("Scraping Dungeon Pages...\n\n");
         DataCache.cacheData(DataCache.dungeonPages, dungeonPageScraper.fetchAll());
     }
     
     public static void scrapeSubDungeonPages() {
-        System.out.println("Scraping Sub-Dungeon Pages...\n\n");
+        logger.info("Scraping Sub-Dungeon Pages...\n\n");
         DataCache.cacheData(DataCache.subDungeonPages, subDungeonPageScraper.fetchAll());
     }
     
     public static void scrapeImageResources() {
-        System.out.println("Scraping Image Resources...\n\n");
+        logger.info("Scraping Image Resources...\n\n");
         DataCache.cacheData(DataCache.imageResources, imageResourceScraper.fetchAll());
     }
     

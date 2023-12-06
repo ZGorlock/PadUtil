@@ -20,8 +20,15 @@ import main.data.mirror.host.DataHost;
 import main.data.mirror.host.ErrorResponse;
 import main.data.scraper.base.Scraper;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class PageScraper extends Scraper<String> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(PageScraper.class);
+    
     
     //Constants
     
@@ -189,6 +196,11 @@ public abstract class PageScraper extends Scraper<String> {
     @Override
     protected int getDelayRms() {
         return DELAY_RMS_PAGE;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

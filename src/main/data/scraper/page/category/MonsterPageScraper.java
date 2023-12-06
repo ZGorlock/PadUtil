@@ -15,8 +15,15 @@ import java.util.stream.IntStream;
 
 import main.data.scraper.page.PageScraper;
 import main.data.scraper.page.main.SearchPageScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MonsterPageScraper extends PageScraper {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(MonsterPageScraper.class);
+    
     
     //Constants
     
@@ -60,6 +67,11 @@ public class MonsterPageScraper extends PageScraper {
     @Override
     protected Pattern getUrlExtractorPattern() {
         return URL_PATTERN_EXTRACTOR_MONSTER;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }

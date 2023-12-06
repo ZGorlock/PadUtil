@@ -20,8 +20,15 @@ import javax.imageio.ImageIO;
 
 import commons.lambda.function.checked.CheckedFunction;
 import main.data.scraper.resource.ResourceScraper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImageResourceScraper extends ResourceScraper<BufferedImage> {
+    
+    //Logger
+    
+    private static final Logger logger = LoggerFactory.getLogger(ImageResourceScraper.class);
+    
     
     //Constants
     
@@ -86,6 +93,11 @@ public class ImageResourceScraper extends ResourceScraper<BufferedImage> {
     @Override
     protected String getContentType() {
         return CONTENT_TYPE_IMAGE;
+    }
+    
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
     
 }
